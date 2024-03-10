@@ -13,11 +13,27 @@ find_package(rclpy REQUIRED)
 
 find_package(sensor_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(teleop_twist_joy REQUIRED)
+#find_package(communicator_library REQUIRED)
 
-
+include_directories(include)
 
 # C++ executables
-include_directories(include)
+install(
+  DIRECTORY include/mapping
+  DESTINATION include
+
+)
+
+add_executable(joystick_teleop src/joystick_controller.cpp)
+ament_target_dependencies(joystick_teleop rclcpp sensor_msgs)
+target_link_libraries(joystick_teleop serial)
+
+install(TARGETS
+  joystick_teleop  
+  DESTINATION lib/${PROJECT_NAME}
+  
+)
 
 # add_executable(mapping_node src/mapping_node.cpp)
 # ament_target_dependencies(mapping_node rclcpp sensor_msgs nav_msgs)
