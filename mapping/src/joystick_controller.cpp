@@ -100,43 +100,51 @@ public:
         }
 };
 
-class MinimalSubscriber : public rclcpp::Node
+class JoystickDriver : public rclcpp::Node
 {
   public:
 
     SerialCommunicator communicator;
     
-
-    MinimalSubscriber()
-    : Node("minimal_subscriber")
+    JoystickDriver()
+    : Node("joystick_driver")
     {
-      subscription_ = this->create_subscription<sensor_msgs::msg::Joy>(
-      "/joy", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
+      joy_subs_ = this->create_subscription<sensor_msgs::msg::Joy>(
+      "/joy", 10, std::bind(&JoystickDriver::command_motors, this, _1));
       communicator.init_comms("/dev/ttyACM0");
       communicator.init_motors();
     }
 
   private:
-    void topic_callback(const sensor_msgs::msg::Joy & msg) 
+    void command_motors(const sensor_msgs::msg::Joy & msg) 
     {
-      int forward_backward = (int)msg.axes[1] * 65535;
+      int forward_backward = (int)(msg.axes[1] * 65535);
 
-      if(forward_backward > 0)
+      int left = (int)  ( ((-msg.axes[4] + 1) / 2) * 65535);
+      int right = (int) ( ((-msg.axes[5] + 1) / 2) * 65535);
+      
+      if(forward_backward > 500)
       {
         communicator.send_command_motors(0, forward_backward, 0, forward_backward, 0);
+        
       }
-      else if(forward_backward < 0)
+      else if(forward_backward < -500)
       {
-        communicator.send_command_motors(1, forward_backward, 1, forward_backward, 0);        
+        communicator.send_command_motors(1, forward_backward, 1, forward_backward, 0); 
+      } else if (right > 500) {
+        communicator.send_command_motors(1, right * 65535, 0, right * 65535, 0);
+      } else if (left > 500) {
+        communicator.send_command_motors(1, left * 65535, 0, left * 65535, 0);
       }
+
     }
-    rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr subscription_;
+    rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_subs_;
 };
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<MinimalSubscriber>());
+  rclcpp::spin(std::make_shared<JoystickDriver>());
   rclcpp::shutdown();
   return 0;
 }
