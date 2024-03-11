@@ -135,6 +135,8 @@ class JoystickDriver : public rclcpp::Node
         communicator.send_command_motors(1, right * 65535, 0, right * 65535, 0);
       } else if (left > 500) {
         communicator.send_command_motors(1, left * 65535, 0, left * 65535, 0);
+      } else {
+        communicator.send_command_motors(0, 0, 0, 0, 0);
       }
 
     }
