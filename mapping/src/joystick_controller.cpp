@@ -71,6 +71,17 @@ public:
             serial << dp.toString() << std::endl;
         }
 
+        void stop_motors(){
+            dp.state = 2;
+            dp.direction_r = 0;
+            dp.motor_r = 0;
+            dp.direction_l = 0;
+            dp.motor_l = 0;
+            dp.servo = 0;
+
+            serial << dp.toString() << std::endl;
+        }
+
         void write_motors(int direction_r, int speed_r, int direction_l, int speed_l) {
             dp.state = 3;
             dp.direction_r = direction_r;
@@ -114,8 +125,9 @@ class JoystickDriver : public rclcpp::Node
     {
       joy_subs_ = this->create_subscription<sensor_msgs::msg::Joy>(
       "/joy", 10, std::bind(&JoystickDriver::command_motors, this, _1));
+      
       communicator.init_comms("/dev/ttyACM0");
-      communicator.init_motors();
+      //communicator.init_motors();
     }
 
   private:
