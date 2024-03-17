@@ -138,18 +138,15 @@ class JoystickDriver : public rclcpp::Node
       int left = (int)  ( ((-msg.axes[4] + 1) / 2) * 65535);
       int right = (int) ( ((-msg.axes[5] + 1) / 2) * 65535);
       
-      if(forward_backward > 500)
-      {
-        communicator.write_motors(0, forward_backward, 0, forward_backward);
-        
+      if(forward_backward > 500) {
+        communicator.write_motors(1, forward_backward, 1, forward_backward);
       }
-      else if(forward_backward < -500)
-      {
-        communicator.write_motors(1, forward_backward, 1, forward_backward); 
+      else if(forward_backward < -500) {
+        communicator.write_motors(0, forward_backward, 0, forward_backward); 
       } else if (right > 500) {
-        communicator.write_motors(0, right * 65535, 1, right * 65535);
+        communicator.write_motors(0, right, 1, right);
       } else if (left > 500) {
-        communicator.write_motors(1, left * 65535, 0, left * 65535);
+        communicator.write_motors(1, left, 0, left);
       } else {
         communicator.write_motors(0, 0, 0, 0);
       }
