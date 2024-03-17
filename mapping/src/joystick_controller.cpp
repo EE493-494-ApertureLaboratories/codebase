@@ -17,9 +17,7 @@ private:
 
 struct data_packet
 {
-    int init;
-    int deinit;
-    int emergency_stop;
+    int state;
     int direction_r;
     int motor_r;
     int direction_l;
@@ -28,7 +26,7 @@ struct data_packet
 
     std::string toString()
     {
-    return std::to_string(init) + " " + std::to_string(deinit)  + " " + std::to_string(emergency_stop)
+    return std::to_string(state)
            + " " + std::to_string(direction_r) + " " + std::to_string(motor_r) 
            + " " + std::to_string(direction_l) + " " + std::to_string(motor_l)
            + " " + std::to_string(servo);
@@ -52,9 +50,7 @@ public:
 
         void init_motors() {
             
-            dp.init = 1;
-            dp.deinit = 0;
-            dp.emergency_stop = 0;
+            dp.state = 0;
             dp.direction_r = 0;
             dp.motor_r = 0;
             dp.direction_l = 0;
@@ -65,9 +61,7 @@ public:
         }
 
         void deinit_motors(){
-            dp.init = 0;
-            dp.deinit = 1;
-            dp.emergency_stop = 0;
+            dp.state = 1;
             dp.direction_r = 0;
             dp.motor_r = 0;
             dp.direction_l = 0;
@@ -77,17 +71,26 @@ public:
             serial << dp.toString() << std::endl;
         }
 
-        void send_command_motors(int direction_r, int speed_r, int direction_l, int speed_l, int servo_pwm) {
-            dp.init = 1;
-            dp.deinit = 0;
-            dp.emergency_stop = 0;
+        void write_motors(int direction_r, int speed_r, int direction_l, int speed_l) {
+            dp.state = 3;
             dp.direction_r = direction_r;
             dp.motor_r = speed_r;
             dp.direction_l = direction_l;
             dp.motor_l = speed_l;
+            dp.servo = 0;
+            serial << dp.toString() << std::endl;
+        }
+
+        void servo(int servo_pwm) {
+            dp.state = 4;
+            dp.direction_r = 0;
+            dp.motor_r = 0;
+            dp.direction_l = 0;
+            dp.motor_l = 0;
             dp.servo = servo_pwm;
             serial << dp.toString() << std::endl;
         }
+
 
         void read() {
            const int BUFFER_SIZE = 256;
@@ -125,18 +128,18 @@ class JoystickDriver : public rclcpp::Node
       
       if(forward_backward > 500)
       {
-        communicator.send_command_motors(0, forward_backward, 0, forward_backward, 0);
+        communicator.write_motors(0, forward_backward, 0, forward_backward);
         
       }
       else if(forward_backward < -500)
       {
-        communicator.send_command_motors(1, forward_backward, 1, forward_backward, 0); 
+        communicator.write_motors(1, forward_backward, 1, forward_backward); 
       } else if (right > 500) {
-        communicator.send_command_motors(0, right * 65535, 1, right * 65535, 0);
+        communicator.write_motors(0, right * 65535, 1, right * 65535);
       } else if (left > 500) {
-        communicator.send_command_motors(1, left * 65535, 0, left * 65535, 0);
+        communicator.write_motors(1, left * 65535, 0, left * 65535);
       } else {
-        communicator.send_command_motors(0, 0, 0, 0, 0);
+        communicator.write_motors(0, 0, 0, 0);
       }
 
     }
