@@ -41,9 +41,12 @@ public:
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr  laser_sub;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr      initPose_sub;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr         odom_pub;
+  rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr         joy_sub;
 
   // CallBacks
   void LaserCallBack(const sensor_msgs::msg::LaserScan::SharedPtr new_scan);
+  void ResetOdomCb(const sensor_msgs::msg::Joy::SharedPtr msg);
   void initPoseCallBack(const nav_msgs::msg::Odometry::SharedPtr new_initPose);
 };
 
+} // namespace rf2o

@@ -16,7 +16,7 @@
 ******************************************************************************************** */
 
 #include "rf2o_laser_odometry/CLaserOdometry2D.hpp"
-
+using std::placeholders::_1;
 namespace rf2o {
 
 

@@ -17,6 +17,7 @@
 
 #include "rf2o_laser_odometry/CLaserOdometry2DNode.hpp"
 
+using std::placeholders::_1;
 using namespace rf2o;
 
 CLaserOdometry2DNode::CLaserOdometry2DNode(): Node("CLaserOdometry2DNode")
@@ -49,6 +50,9 @@ CLaserOdometry2DNode::CLaserOdometry2DNode(): Node("CLaserOdometry2DNode")
   laser_sub = this->create_subscription<sensor_msgs::msg::LaserScan>(laser_scan_topic,rclcpp::QoS(rclcpp::KeepLast(1)).best_effort().durability_volatile(),
       std::bind(&CLaserOdometry2DNode::LaserCallBack, this, std::placeholders::_1));
   
+  joy_sub = this->create_subscription<sensor_msgs::msg::Joy>(
+      "/joy", 10, std::bind(&CLaserOdometry2DNode::ResetOdomCb, this, _1));
+
   // Initialize pose
   if (init_pose_from_topic != "")
   {
@@ -79,6 +83,31 @@ CLaserOdometry2DNode::CLaserOdometry2DNode(): Node("CLaserOdometry2DNode")
  * Keeps the last scan from the 2D lidar to be latter processed
  * On the first laser scan, the node is initialized.
 */
+
+void CLaserOdometry2DNode::ResetOdomCb(const sensor_msgs::msg::Joy::SharedPtr msg)
+{
+  if (msg->buttons[2] == 1)
+  {
+
+    GT_pose_initialized = true;
+    initial_robot_pose.pose.pose.position.x = 0;
+    initial_robot_pose.pose.pose.position.y = 0;
+    initial_robot_pose.pose.pose.position.z = 0;
+    initial_robot_pose.pose.pose.orientation.w = 0;
+    initial_robot_pose.pose.pose.orientation.x = 0;
+    initial_robot_pose.pose.pose.orientation.y = 0;
+    initial_robot_pose.pose.pose.orientation.z = 0;
+
+    rf2o_ref.module_initialized = false;
+    rf2o_ref.first_laser_scan   = true;
+    RCLCPP_INFO(get_logger(), "Odometry reset");
+
+    setLaserPoseFromTf();
+    rf2o_ref.init(last_scan, initial_robot_pose.pose.pose);
+    rf2o_ref.first_laser_scan = false;
+  }
+}
+
 void CLaserOdometry2DNode::LaserCallBack(const sensor_msgs::msg::LaserScan::SharedPtr new_scan)
 {
   if (GT_pose_initialized)
@@ -242,8 +271,6 @@ void CLaserOdometry2DNode::publish()
     odom_broadcaster->sendTransform(odom_trans);
   }
 }
-
-} /* namespace rf2o */
 
 
 //-----------------------------------------------------------------------------------

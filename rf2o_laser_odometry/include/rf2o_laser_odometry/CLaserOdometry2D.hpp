@@ -22,12 +22,15 @@
 #include <iostream>
 #include <fstream>
 #include <numeric>
+
 // ROS headers
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <geometry_msgs/msg/quaternion.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
+#include "sensor_msgs/msg/joy.hpp"
 #include <geometry_msgs/msg/pose.hpp>
+
 // Eigen headers
 #include <eigen3/Eigen/Dense>
 #include <eigen3/Eigen/Geometry>
