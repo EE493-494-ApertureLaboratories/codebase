@@ -11,7 +11,7 @@ from launch.conditions import IfCondition
 from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
-    
+
     channel_type =  LaunchConfiguration('channel_type', default='serial')
     serial_port = LaunchConfiguration('serial_port', default='/dev/ttyUSB0')
     serial_baudrate = LaunchConfiguration('serial_baudrate', default='115200')
@@ -76,7 +76,7 @@ def generate_launch_description():
                          'frame_id': frame_id,
                          'inverted': inverted,
                          'angle_compensate': angle_compensate,
-                           'scan_mode': scan_mode
+                        'scan_mode': scan_mode
                          }],
             output='screen'),
 
@@ -84,7 +84,7 @@ def generate_launch_description():
             package='rviz2',
             executable='rviz2',
             name='rviz2',
-            #arguments=['-d', rviz_config_dir],
+            arguments=['-d', rviz_config_dir],
             output='screen',
             condition=IfCondition(LaunchConfiguration('rviz')),
         ),
