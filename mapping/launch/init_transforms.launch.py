@@ -28,13 +28,13 @@ def generate_launch_description():
                           '--frame-id', 'chassis_link', '--child-frame-id', 'left_wheel_link']
         ),
         ############################################
-        # Node(
-        #      package='tf2_ros',
-        #      executable='static_transform_publisher',
-        #      arguments = ['--x', '1.0', '--y', '-0.109.', '--z', '0.10', 
-        #                   '--yaw', '0.0', '--pitch', '0.0', '--roll', '0.0', 
-        #                   '--frame-id', 'chassis_link', '--child-frame-id', 'rotation_axis']
-        # ),
+        Node(
+             package='tf2_ros',
+             executable='static_transform_publisher',
+             arguments = ['--x', '1.0', '--y', '-0.109.', '--z', '0.10', 
+                          '--yaw', '0.0', '--pitch', '0.0', '--roll', '0.0', 
+                          '--frame-id', 'chassis_link', '--child-frame-id', 'rotation_axis']
+        ),
 
         Node(
              package='tf2_ros',
