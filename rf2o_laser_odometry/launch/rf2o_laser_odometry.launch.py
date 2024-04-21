@@ -26,7 +26,7 @@ def generate_launch_description():
                     'odom_topic' : '/odom',
                     'publish_tf' : True,
                     'base_frame_id' : 'base_link',
-                    'odom_frame_id' : 'odom',
+                    'odom_frame_id' : 'partial_odom',
                     'init_pose_from_topic' : '',
                     'freq' : 20.0}],
             ),

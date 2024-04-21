@@ -37,12 +37,12 @@ def generate_launch_description():
                 output='screen',
                 parameters=[{
                     'laser_scan_topic' : '/scan',
-                    'odom_topic' : '/odom',
+                    'odom_topic' : '/partial_odom',
                     'publish_tf' : True,
                     'base_frame_id' : 'base_link',
-                    'odom_frame_id' : 'odom',
+                    'odom_frame_id' : 'partial_odom',
                     'init_pose_from_topic' : '',
-                    'freq' : 30.0}],
+                    'freq' : 10.0}],
             ),
 
     ])

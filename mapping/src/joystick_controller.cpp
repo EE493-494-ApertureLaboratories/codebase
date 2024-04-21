@@ -1,15 +1,20 @@
-#include <memory>
-// #include "communicator.h"
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/joy.hpp"
 
-using std::placeholders::_1;
 
 #include </usr/include/libserial/SerialStream.h>
 #include <iostream>
 #include <string>
 #include <chrono>
 #include <thread>
+#include <functional>
+#include <sstream>
+#include <memory>
+
+#include <math.h>
+
+using std::placeholders::_1;
+using namespace std::chrono_literals;
 
 class SerialCommunicator {
 
@@ -102,10 +107,7 @@ public:
             serial << dp.toString() << std::endl;
         }
 
-
-        void read() {
-           const int BUFFER_SIZE = 256;
-            char input_buffer[BUFFER_SIZE];
+        void read(int BUFFER_SIZE, char* input_buffer) {
             serial.read( input_buffer, BUFFER_SIZE);
         }
 
@@ -117,21 +119,19 @@ public:
 class JoystickDriver : public rclcpp::Node
 {
   public:
-
-    SerialCommunicator communicator;
     
     JoystickDriver()
     : Node("joystick_driver")
     {
-      joy_subs_ = this->create_subscription<sensor_msgs::msg::Joy>(
+      joy_sub_ = this->create_subscription<sensor_msgs::msg::Joy>(
       "/joy", 10, std::bind(&JoystickDriver::command_actuators, this, _1));
       
-      communicator.init_comms("/dev/ttyACM0");
-      //communicator.init_motors();
+      // Initialize the serial communicator
+      communicator.init_comms("/dev/ttyACM0");      
     }
 
   private:
-    
+  
     void command_motors(int forward_backward, int left, int right) {
       if(forward_backward > 500) {
         communicator.write_motors(1, forward_backward, 1, forward_backward);
@@ -147,30 +147,55 @@ class JoystickDriver : public rclcpp::Node
       }
     }
 
+    void rotate_servo(){
+      
+      for (int i = -15; i <= 20; i++) {
+        
+        int pwm_value = (int)((218.45 * i + 32389 + 13630) / 9.4486) - 46;
+        communicator.servo(pwm_value);
+        rclcpp::sleep_for(std::chrono::milliseconds(150));
+
+
+        char input_buffer[6];
+        communicator.read(6, input_buffer);
+        RCLCPP_INFO(get_logger(), input_buffer);
+        rclcpp::sleep_for(std::chrono::milliseconds(350));
+        
+      }
+    }
+
+
     void command_actuators(const sensor_msgs::msg::Joy & msg) 
     {
 
-      int stop = msg.buttons[1];
-      int rotate = msg.buttons[3];
-      int servo_scan = msg.buttons[4];
-      int enable_motors = msg.buttons[5];
+      int add_odom = msg.buttons[0]; // A button, Green
+      int stop = msg.buttons[1];          // B button, Red
+      int reset_odom = msg.buttons[2];   // X button, Blue
+      int rotate = msg.buttons[3];      // Y button, Yellow
+      
+      int servo_scan = msg.buttons[4]; // LB button, Left Bumper
+      int enable_motors = msg.buttons[5]; // RB button, Right Bumper
 
       int forward_backward = (int)(msg.axes[1] * 65535);
       int left = (int)  ( ((-msg.axes[4] + 1) / 2) * 65535);
       int right = (int) ( ((-msg.axes[5] + 1) / 2) * 65535);
+      
       if(stop) {
         communicator.stop_motors();
-      } else if(rotate) {
-        communicator.write_motors(1, 65535, 0, 65535);
-      } else if(servo_scan) {
-        communicator.servo(65535);
       } else if(enable_motors) {
         command_motors(forward_backward, left, right);
+      } else if(servo_scan) {
+        rotate_servo();
+      } else if(rotate) {
+        communicator.write_motors(1, 65535, 0, 65535);
       } else {
         communicator.write_motors(0, 0, 0, 0);
       }
+
     }
-    rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_subs_;
+    
+    SerialCommunicator communicator;
+    rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
 };
 
 //      rclcpp::sleep_for(std::chrono::milliseconds(100));
