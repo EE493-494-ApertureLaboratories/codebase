@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import rclpy
-from mapping.octomap_odom.py import OctoMapOdom
+from mapping.octomap_odom import OctoMapOdom
 
 
 def main(args=None):
