@@ -50,7 +50,7 @@ public:
   std::shared_ptr<tf2_ros::Buffer>                buffer_;
   std::shared_ptr<tf2_ros::TransformListener>     tf_listener_;
 
-  std::unique_ptr<tf2_ros::TransformBroadcaster>  odom_broadcaster;
+  std::unique_ptr<tf2_ros::TransformBroadcaster>  partial_odom_broadcaster;
   std::unique_ptr<tf2_ros::TransformBroadcaster>  big_odom_broadcaster;
   
   nav_msgs::msg::Odometry                         initial_robot_pose;
@@ -58,7 +58,7 @@ public:
   // Subscriptions & Publishers
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr  laser_sub;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr      initPose_sub;
-  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr         odom_pub;
+  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr         partial_odom_pub;
   
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr          big_odom_pub;
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr         joy_sub;
