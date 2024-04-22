@@ -183,7 +183,7 @@ class JoystickDriver : public rclcpp::Node
       }
 
       communicator.servo(4824);
-      pub_transforms(3.14159/180);
+      pub_transforms(0);
     }
 
 
@@ -213,6 +213,8 @@ class JoystickDriver : public rclcpp::Node
       } else {
         communicator.write_motors(0, 0, 0, 0);
       }
+
+      pub_transforms(0);
 
     }
     
