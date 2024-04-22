@@ -32,9 +32,10 @@ class OctoMapOdom(Node):
 
         self.timer = self.create_timer(0.032, self.publish_octomap_odom)
 
+        q = tf_transformations.quaternion_from_euler(0, 0, 0)
         self.octomap_x = 0.0
         self.octomap_y = 0.0
-        self.octomap_quat = 0.0
+        self.octomap_quat = Quaternion(x=q[0], y=q[1], z=q[2], w=q[3])
 
         self.global_x = 0
         self.global_y = 0
@@ -42,9 +43,7 @@ class OctoMapOdom(Node):
 
         self.local_x = 0
         self.local_y = 0
-
-        q = tf_transformations.quaternion_from_euler(0, 0, 0)
-        self.local_quat = Quaternion(x=q[0], y=q[1], z=q[2], w=q[3])
+        self.local_quat = 0.0
 
     def joy_callback(self, joy: Joy):
         
