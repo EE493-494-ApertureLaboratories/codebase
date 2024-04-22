@@ -30,7 +30,7 @@ class OctoMapOdom(Node):
             Joy, "/joy", self.joy_callback, 10
         )
 
-        self.timer = self.create_timer(0.032, self.publish_octomap_odom)
+        self.timer = self.create_timer(0.0166666, self.publish_octomap_odom)
 
         q = tf_transformations.quaternion_from_euler(0, 0, 0)
         self.octomap_x = 0.0
