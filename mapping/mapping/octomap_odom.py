@@ -7,6 +7,7 @@ from sensor_msgs.msg import Joy
 from nav_msgs.msg import Odometry
 
 import tf_transformations
+from geometry_msgs.msg import Quaternion
 
 class OctoMapOdom(Node):
     def __init__(self):
@@ -41,7 +42,7 @@ class OctoMapOdom(Node):
 
         self.local_x = 0
         self.local_y = 0
-        self.local_quat = 0
+        self.local_quat = quaternion_from_euler(0, 0, 0)
 
     def joy_callback(self, joy: Joy):
         
