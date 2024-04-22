@@ -50,8 +50,10 @@ class OctoMapOdom(Node):
         if joy.buttons[5]:
             octomap_x = self.global_x + self.local_x
             octomap_y = self.global_y + self.local_y
-            # octomap_theta 
-            octomap_quat = tf_transformations.quaternion_multiply(self.global_quat, self.local_quat)
+
+            q =  tf_transformations.quaternion_multiply(self.global_quat, self.local_quat)
+            octomap_quat = Quaternion(x=q[0], y=q[1], z=q[2], w=q[3])
+
         elif joy.buttons[4]:
             octomap_x = self.global_x
             octomap_y = self.global_y
