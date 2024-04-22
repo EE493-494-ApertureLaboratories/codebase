@@ -164,9 +164,9 @@ class JoystickDriver : public rclcpp::Node
       else if(forward_backward < -500) {
         communicator.write_motors(0, forward_backward, 0, forward_backward); 
       } else if (right > 500) {
-        communicator.write_motors(0, right, 1, right);
+        communicator.write_motors(1, right, 0, right);
       } else if (left > 500) {
-        communicator.write_motors(1, left, 0, left);
+        communicator.write_motors(0, left, 1, left);
       } else {
         communicator.write_motors(0, 0, 0, 0);
       }
