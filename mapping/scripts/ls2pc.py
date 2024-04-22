@@ -6,7 +6,7 @@ from mapping.laserscan2pointcloud import LaserScan2PointCloudConverter
 
 def main(args=None):
     rclpy.init(args=args)
-    node = Converter()
+    node = LaserScan2PointCloudConverter()
     rclpy.spin(node)
     rclpy.shutdown()
 
