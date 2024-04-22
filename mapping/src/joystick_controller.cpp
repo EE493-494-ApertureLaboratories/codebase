@@ -181,6 +181,9 @@ class JoystickDriver : public rclcpp::Node
         rclcpp::sleep_for(std::chrono::milliseconds(500));
         //RCLCPP_INFO(get_logger(), "Servo: %d", pwm_value);        
       }
+
+      communicator.servo(4824);
+      pub_transforms(3.14159/180);
     }
 
 
