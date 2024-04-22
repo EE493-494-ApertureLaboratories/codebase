@@ -31,9 +31,9 @@ class OctoMapOdom(Node):
 
         self.timer = self.create_timer(0.032, self.publish_octomap_odom)
 
-        self.octomap_x = 0
-        self.octomap_y = 0
-        self.octomap_quat = 0
+        self.octomap_x = 0.0
+        self.octomap_y = 0.0
+        self.octomap_quat = 0.0
 
         self.global_x = 0
         self.global_y = 0
@@ -72,7 +72,7 @@ class OctoMapOdom(Node):
 
         msg.pose.pose.position.x = self.octomap_x
         msg.pose.pose.position.y = self.octomap_y
-        msg.pose.pose.position.z = 0
+        msg.pose.pose.position.z = 0.0
 
         msg.pose.pose.orientation = self.octomap_quat
 
