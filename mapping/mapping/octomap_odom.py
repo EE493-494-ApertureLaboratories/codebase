@@ -39,7 +39,7 @@ class OctoMapOdom(Node):
 
         self.global_x = 0.0
         self.global_y = 0.0
-        self.global_quat = Quaternion(0.0, y=0.0, z=0.0, w=0.0)
+        self.global_quat = Quaternion(x=0.0, y=0.0, z=0.0, w=0.0)
 
         self.local_x = 0.0
         self.local_y = 0.0
