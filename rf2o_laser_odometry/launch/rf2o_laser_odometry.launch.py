@@ -23,10 +23,10 @@ def generate_launch_description():
                 output='screen',
                 parameters=[{
                     'laser_scan_topic' : '/scan',
-                    'odom_topic' : '/odom',
+                    'odom_topic' : '/local_odom',
                     'publish_tf' : False,
                     'base_frame_id' : 'base_link',
-                    'odom_frame_id' : 'partial_odom',
+                    'odom_frame_id' : 'local_odom',
                     'init_pose_from_topic' : '',
                     'freq' : 20.0}],
             ),

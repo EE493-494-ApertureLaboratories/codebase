@@ -46,7 +46,7 @@ CLaserOdometry2DNode::CLaserOdometry2DNode(): Node("CLaserOdometry2DNode")
   big_odom_broadcaster = std::make_unique<tf2_ros::TransformBroadcaster>(this);
 
   // Publishers
-  partial_odom_pub  = this->create_publisher<nav_msgs::msg::Odometry>("/local_odom", 5);
+  local_odom_pub  = this->create_publisher<nav_msgs::msg::Odometry>(odom_topic, 5);
   big_odom_pub  = this->create_publisher<nav_msgs::msg::Odometry>("/global_odom", 5);
   
   // Subscribers
@@ -132,7 +132,7 @@ void CLaserOdometry2DNode::publish()
   odom.twist.twist.linear.y = 0.0;
   odom.twist.twist.angular.z = rf2o_ref.ang_speed;   //angular speed
   //publish the message
-  partial_odom_pub->publish(odom);
+  local_odom_pub->publish(odom);
 
   if (publish_tf)
   {

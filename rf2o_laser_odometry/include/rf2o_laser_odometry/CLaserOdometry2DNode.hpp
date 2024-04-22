@@ -58,7 +58,7 @@ public:
   // Subscriptions & Publishers
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr  laser_sub;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr      initPose_sub;
-  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr         partial_odom_pub;
+  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr         local_odom_pub;
   
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr          big_odom_pub;
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr         joy_sub;
