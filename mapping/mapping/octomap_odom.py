@@ -4,7 +4,7 @@
 from rclpy.node import Node
 
 from sensor_msgs.msg import Joy
-from nav2_msgs.msg import Odometry
+from nav_msgs.msg import Odometry
 
 import tf_transformations
 
