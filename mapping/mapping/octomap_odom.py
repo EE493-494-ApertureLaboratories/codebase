@@ -37,13 +37,14 @@ class OctoMapOdom(Node):
         self.octomap_y = 0.0
         self.octomap_quat = Quaternion(x=q[0], y=q[1], z=q[2], w=q[3])
 
-        self.global_x = 0
-        self.global_y = 0
-        self.global_quat = Quaternion(x=q[0], y=q[1], z=q[2], w=q[3])
+        self.global_x = 0.0
+        self.global_y = 0.0
+        self.global_quat = Quaternion(0.0, y=0.0, z=0.0, w=0.0)
 
-        self.local_x = 0
-        self.local_y = 0
-        self.local_quat = Quaternion(x=0, y=0, z=0, w=0)
+        self.local_x = 0.0
+        self.local_y = 0.0
+        self.local_quat = Quaternion(x=0.0, y=0.0, z=0.0, w=0.0)
+
     def joy_callback(self, joy: Joy):
         
         if joy.buttons[5]:
