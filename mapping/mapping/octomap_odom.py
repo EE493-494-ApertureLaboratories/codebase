@@ -8,7 +8,7 @@ from nav_msgs.msg import Odometry
 
 import tf_transformations
 
-class OctoMapOdom():
+class OctoMapOdom(Node):
     def __init__(self):
         super().__init__("OctoMapOdom")
         self.get_logger().info("OctoMapOdom has been started")
