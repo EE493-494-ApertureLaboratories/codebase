@@ -16,6 +16,10 @@ find_package(nav_msgs REQUIRED)
 find_package(teleop_twist_joy REQUIRED)
 #find_package(communicator_library REQUIRED)
 
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2  REQUIRED)
+find_package(tf2_ros REQUIRED)
+
 include_directories(include)
 
 # C++ executables
@@ -26,7 +30,7 @@ install(
 )
 
 add_executable(joystick_teleop src/joystick_controller.cpp)
-ament_target_dependencies(joystick_teleop rclcpp sensor_msgs)
+ament_target_dependencies(joystick_teleop rclcpp sensor_msgs tf2_ros tf2)
 target_link_libraries(joystick_teleop serial)
 
 install(TARGETS
@@ -48,6 +52,15 @@ ament_python_install_package(${PROJECT_NAME})
 #install(PROGRAMS
 #  scripts/mapping_node.py
 #  DESTINATION lib/${PROJECT_NAME})
+
+install(PROGRAMS
+ scripts/ls_filter.py
+ DESTINATION lib/${PROJECT_NAME})
+
+ install(PROGRAMS
+ scripts/ls2pc.py
+ DESTINATION lib/${PROJECT_NAME})
+
 
 # Include other folders
 install(DIRECTORY

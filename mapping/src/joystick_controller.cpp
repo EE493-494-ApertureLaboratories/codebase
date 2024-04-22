@@ -1,6 +1,9 @@
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/joy.hpp"
 
+#include "tf2_ros/transform_broadcaster.h"
+#include "geometry_msgs/msg/transform_stamped.hpp"
+#include "tf2/LinearMath/Quaternion.h"
 
 #include </usr/include/libserial/SerialStream.h>
 #include <iostream>
@@ -127,11 +130,33 @@ class JoystickDriver : public rclcpp::Node
       "/joy", 10, std::bind(&JoystickDriver::command_actuators, this, _1));
       
       // Initialize the serial communicator
-      communicator.init_comms("/dev/ttyACM0");      
+      communicator.init_comms("/dev/ttyACM0");  
+      
+      lidar_frame_pub_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);    
     }
 
   private:
-  
+    void pub_transforms(float lidar_angle){
+      geometry_msgs::msg::TransformStamped t;
+
+      t.header.stamp = this->get_clock()->now();
+      t.header.frame_id = "chassis_link";
+      t.child_frame_id = "rotation_point";
+
+      t.transform.translation.x = 1.0;
+      t.transform.translation.y = -0.109;
+      t.transform.translation.z = 0.1;
+
+      tf2::Quaternion q;
+      q.setRPY(0, -lidar_angle, 0);
+      t.transform.rotation.x = q.x();
+      t.transform.rotation.y = q.y();
+      t.transform.rotation.z = q.z();
+      t.transform.rotation.w = q.w();
+
+      lidar_frame_pub_->sendTransform(t);
+    }
+
     void command_motors(int forward_backward, int left, int right) {
       if(forward_backward > 500) {
         communicator.write_motors(1, forward_backward, 1, forward_backward);
@@ -150,17 +175,11 @@ class JoystickDriver : public rclcpp::Node
     void rotate_servo(){
       
       for (int i = -15; i <= 20; i++) {
-        
         int pwm_value = (int)((218.45 * i + 32389 + 13630) / 9.4486) - 46;
+        pub_transforms(i*3.14159/180);
         communicator.servo(pwm_value);
-        rclcpp::sleep_for(std::chrono::milliseconds(150));
-
-
-        char input_buffer[6];
-        communicator.read(6, input_buffer);
-        RCLCPP_INFO(get_logger(), input_buffer);
-        rclcpp::sleep_for(std::chrono::milliseconds(350));
-        
+        rclcpp::sleep_for(std::chrono::milliseconds(500));
+        //RCLCPP_INFO(get_logger(), "Servo: %d", pwm_value);        
       }
     }
 
@@ -196,6 +215,7 @@ class JoystickDriver : public rclcpp::Node
     
     SerialCommunicator communicator;
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
+    std::unique_ptr<tf2_ros::TransformBroadcaster> lidar_frame_pub_;
 };
 
 //      rclcpp::sleep_for(std::chrono::milliseconds(100));
