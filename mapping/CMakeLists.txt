@@ -61,6 +61,10 @@ install(PROGRAMS
  scripts/ls2pc.py
  DESTINATION lib/${PROJECT_NAME})
 
+ install(PROGRAMS
+ scripts/odom_pub.py
+ DESTINATION lib/${PROJECT_NAME})
+
 
 # Include other folders
 install(DIRECTORY
